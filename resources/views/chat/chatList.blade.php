@@ -7,7 +7,8 @@
 
     <div class="container h-full">
         <div id="app" class="h-75">
-            <chat-component></chat-component>
+            {{--현재 접속한 유저 데이터 보내기--}}
+            <chat-component :current-user="{{auth()->id()}}"></chat-component>
         </div>
     </div>
 @endsection

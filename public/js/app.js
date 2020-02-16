@@ -1909,6 +1909,13 @@ module.exports = {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ChatUserList__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChatUserList */ "./resources/js/components/ChatUserList.vue");
+/* harmony import */ var _ChatArea__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ChatArea */ "./resources/js/components/ChatArea.vue");
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -1923,15 +1930,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 //다른 컴포넌트 import
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    currentUser: {
+      type: Number,
+      required: true
+    }
+  },
   //컴포넌트 등록
   components: {
-    ChatUserList: _ChatUserList__WEBPACK_IMPORTED_MODULE_0__["default"]
+    ChatUserList: _ChatUserList__WEBPACK_IMPORTED_MODULE_0__["default"],
+    ChatArea: _ChatArea__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  data: function data() {
+    return {
+      chatWith: null
+    };
   },
   mounted: function mounted() {
     console.log('Component mounted.');
+  },
+  methods: {
+    updateChatWith: function updateChatWith(value) {
+      this.chatWith = value;
+    }
   }
 });
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ChatArea.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ChatArea.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+//
+//
+//
+//
 
 /***/ }),
 
@@ -1954,7 +1993,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    currentUser: {
+      type: Number,
+      required: true
+    }
+  },
+  //데이터가 바뀐것 까지 계산
+  computed: {
+    usersWithoutSignedInUser: function usersWithoutSignedInUser() {
+      var _this = this;
+
+      return this.users.filter(function (user) {
+        return user.id !== _this.currentUser;
+      });
+    }
+  },
   //data()  웹 network에서 받아온 데이터
   data: function data() {
     return {
@@ -1962,16 +2019,21 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
-    var _this = this;
+    var _this2 = this;
 
     //ajax 통신
     axios.get('/api/users').then(function (res) {
       console.log(res); //data객체에 데이터란걸
 
-      _this.users = res.data.users;
+      _this2.users = res.data.users;
     })["catch"](function (error) {
       console.log(error);
     });
+  },
+  methods: {
+    updateChatWith: function updateChatWith(userId) {
+      this.$emit("updatedChatWith", userId);
+    }
   }
 });
 
@@ -37536,7 +37598,23 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "flex h-full" },
-    [_c("ChatUserList"), _vm._v(" "), _vm._m(0)],
+    [
+      _c("ChatUserList", {
+        attrs: { "current-user": _vm.currentUser },
+        on: { updatedChatWith: _vm.updateChatWith }
+      }),
+      _vm._v(" "),
+      _vm.chatWith
+        ? _c(
+            "div",
+            { staticClass: "w-4/5 flex flex-col" },
+            [_c("ChatArea"), _vm._v(" "), _vm._m(0)],
+            1
+          )
+        : _c("div", { staticClass: "p-3" }, [
+            _vm._v("\n        채팅 상대를 선택해주세요\n    ")
+          ])
+    ],
     1
   )
 }
@@ -37545,20 +37623,33 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "w-4/5 flex flex-col" }, [
-      _c("div", { staticClass: "flex-1" }, [_vm._v("Chat Area")]),
-      _vm._v(" "),
-      _c("div", { staticClass: "flex-initial p-2" }, [
-        _c("input", {
-          staticClass:
-            "border-2 border-solid rounded border-gray-600 w-full p-3",
-          attrs: { type: "text" }
-        })
-      ])
+    return _c("div", { staticClass: "flex-initial p-2" }, [
+      _c("input", {
+        staticClass: "border-2 border-solid rounded border-gray-600 w-full p-3",
+        attrs: { type: "text" }
+      })
     ])
   }
 ]
 render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ChatArea.vue?vue&type=template&id=1fa81220&":
+/*!***********************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/ChatArea.vue?vue&type=template&id=1fa81220& ***!
+  \***********************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function () {}
+var staticRenderFns = []
 
 
 
@@ -37581,11 +37672,22 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "w-1/5 border-r-2 border-solid border-gray-600" },
-    _vm._l(_vm.users, function(user, index) {
-      return _c("div", { key: user.id }, [
-        _vm._v("\n        " + _vm._s(user.name) + "\n    ")
-      ])
+    { staticClass: "w-1/5 border-2 border-solid border-gray-600" },
+    _vm._l(_vm.usersWithoutSignedInUser, function(user) {
+      return _c(
+        "div",
+        {
+          key: user.id,
+          staticClass:
+            "border-b-2 border-gray-600 hover:bg-gray-300 cursor-pointer",
+          on: {
+            click: function($event) {
+              return _vm.updateChatWith(user.id)
+            }
+          }
+        },
+        [_vm._v("\n        " + _vm._s(user.name) + "\n    ")]
+      )
     }),
     0
   )
@@ -50233,6 +50335,78 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Chat_vue_vue_type_template_id_0d66c37a___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Chat_vue_vue_type_template_id_0d66c37a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/ChatArea.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/components/ChatArea.vue ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ChatArea_vue_vue_type_template_id_1fa81220___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChatArea.vue?vue&type=template&id=1fa81220& */ "./resources/js/components/ChatArea.vue?vue&type=template&id=1fa81220&");
+/* harmony import */ var _ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ChatArea.vue?vue&type=script&lang=js& */ "./resources/js/components/ChatArea.vue?vue&type=script&lang=js&");
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ChatArea_vue_vue_type_template_id_1fa81220___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ChatArea_vue_vue_type_template_id_1fa81220___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/ChatArea.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/ChatArea.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/ChatArea.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ChatArea.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ChatArea.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/components/ChatArea.vue?vue&type=template&id=1fa81220&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/ChatArea.vue?vue&type=template&id=1fa81220& ***!
+  \*****************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_template_id_1fa81220___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./ChatArea.vue?vue&type=template&id=1fa81220& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/ChatArea.vue?vue&type=template&id=1fa81220&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_template_id_1fa81220___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ChatArea_vue_vue_type_template_id_1fa81220___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
