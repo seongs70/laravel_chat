@@ -21,7 +21,9 @@
 
 - php artisan voyager:install --with-dummy
 
+- composer require pusher/pusher-php-server "~4.0"
 
+- npm install --save laravel-echo pusher-js
 
 ## URL Laravel
 

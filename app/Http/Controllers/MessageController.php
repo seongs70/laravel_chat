@@ -34,7 +34,7 @@ class MessageController extends Controller
         $message = Message::create($validated);
 //        dd(request()->all());
         return response()->json([
-            'message' => $message
+            'message' => $message->load('from')
         ],201);
     }
 }
