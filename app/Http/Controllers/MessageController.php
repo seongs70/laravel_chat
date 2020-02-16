@@ -7,6 +7,23 @@ use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
+    public function index()
+    {
+        //엔드로 묶이고
+        $messages = Message::where(function($query){
+            $query->where('from', request('from'));
+            $query->where('to', request('to'));
+            //or로 묶이고
+        })->orWhere(function($query){
+            $query->where('from', request('to'));
+            $query->where('to', request('from'));
+        })->get();
+
+        return response()->json([
+            //관계까지 다가져옴
+            'messages' => $messages->load('from', 'to')
+        ], 200);
+    }
     public function store()
     {
         $validated = request()->validate([

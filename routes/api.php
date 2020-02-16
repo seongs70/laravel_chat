@@ -21,6 +21,7 @@ Route::prefix('messages')->
 
 //middleware('auth:api')->
 group(function(){
+   Route::get('/','MessageController@index');
    Route::post('/','MessageController@store');
    //주소는       도메인/api/messages
 });
