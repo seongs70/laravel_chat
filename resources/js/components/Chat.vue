@@ -1,6 +1,6 @@
 <template>
     <div class="flex h-full">
-        <div class="w-1/5 border-r-2 border-solid border-gray-600">User list</div>
+        <ChatUserList />
         <div class="w-4/5 flex flex-col">
             <div class="flex-1">Chat Area</div>
             <div class="flex-initial p-2">
@@ -11,7 +11,13 @@
 </template>
 
 <script>
+    //다른 컴포넌트 import
+    import ChatUserList from "./ChatUserList";
     export default {
+        //컴포넌트 등록
+        components: {
+            ChatUserList
+        },
         mounted() {
             console.log('Component mounted.')
         }
