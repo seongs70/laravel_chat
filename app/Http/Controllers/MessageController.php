@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageSent;
 use App\Message;
 use Illuminate\Http\Request;
 
@@ -32,6 +33,9 @@ class MessageController extends Controller
            'from' => 'required'
         ]);
         $message = Message::create($validated);
+
+        //이벤트를 MessageSent.php // counstruct 메소드에 보냄
+        MessageSent::dispatch($message);
 //        dd(request()->all());
         return response()->json([
             'message' => $message->load('from')

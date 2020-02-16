@@ -1,9 +1,11 @@
 <template>
     <div class="w-1/5 border-2 border-solid border-gray-600">
-        <div v-for="user in usersWithoutSignedInUser"
-             :key="user.id"
-             class="border-b-2 border-gray-600 hover:bg-gray-300 cursor-pointer"
-             @click="updateChatWith(user.id)"
+        <div
+            v-for="user in usersWithoutSignedInUser"
+            :key="user.id"
+            class="border-b-2 border-gray-600 hover:bg-gray-300 cursor-pointer"
+            :class="{ 'text-pink-400':chatWith === user.id }"
+            @click="updateChatWith(user.id)"
         >
             {{user.name}}
         </div>
@@ -16,6 +18,11 @@
             currentUser:{
                 type:Number,
                 required: true
+            },
+
+            chatWith: {
+                type:Number,
+                required:false
             }
         },
         //데이터가 바뀐것 까지 계산

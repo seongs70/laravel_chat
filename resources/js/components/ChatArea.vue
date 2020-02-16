@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-1">
+    <div class="flex-1 overflow-y-scroll" v-chat-scroll>
 <!--        <p>Chatting With user {{chatId}}</p>-->
         <ChatMessage
             v-for="message in messages"

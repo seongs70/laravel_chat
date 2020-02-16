@@ -25,6 +25,22 @@
 
 - npm install --save laravel-echo pusher-js
 
+- php artisan make:event MessageSent
+
+- env변경, app.php에 App\Providers\BroadcastServiceProvider::class, 주석해제
+
+- 채널받기
+  created(){
+          window.Echo.private('chats').listen('MessageSent', e=>{
+            console.log(e);
+            this.messages.push(e.message);
+          });
+        },
+
+- channels.php에서 private채널 작성
+
+- npm i vue-chat-scroll
+
 ## URL Laravel
 
 - Voyager -> /admin

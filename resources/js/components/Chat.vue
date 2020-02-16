@@ -2,6 +2,7 @@
     <div class="flex h-full">
         <ChatUserList
             :current-user="currentUser"
+            :chat-with="chatWith"
             @updatedChatWith="updateChatWith"
         />
         <div v-if="chatWith" class="w-4/5 flex flex-col">
@@ -50,6 +51,18 @@
         },
         mounted() {
             console.log('Component mounted.')
+        },
+
+        // pusher에서 chat채널을 받아옴
+        created(){
+          window.Echo.private('chats').listen('MessageSent', e=>{
+              // 보내는 사람이 나고 받는 사람이 상대일경우만 메시지 push
+              if(e.message.to == this.currentUser && e.message.from == this.chatWith){
+                  console.log(e);
+                  this.messages.push(e.message);
+              }
+
+          });
         },
 
         methods:{

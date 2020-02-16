@@ -1936,6 +1936,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 //다른 컴포넌트 import
 
 
@@ -1961,13 +1962,26 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     console.log('Component mounted.');
   },
+  // pusher에서 chat채널을 받아옴
+  created: function created() {
+    var _this = this;
+
+    window.Echo["private"]('chats').listen('MessageSent', function (e) {
+      // 보내는 사람이 나고 받는 사람이 상대일경우만 메시지 push
+      if (e.message.to == _this.currentUser && e.message.from == _this.chatWith) {
+        console.log(e);
+
+        _this.messages.push(e.message);
+      }
+    });
+  },
   methods: {
     updateChatWith: function updateChatWith(value) {
       this.chatWith = value;
       this.getMessages();
     },
     getMessages: function getMessages() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('/api/messages', {
         params: {
@@ -1976,11 +1990,11 @@ __webpack_require__.r(__webpack_exports__);
         }
       }).then(function (res) {
         console.log(res);
-        _this.messages = res.data.messages;
+        _this2.messages = res.data.messages;
       });
     },
     submit: function submit() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.text) {
         axios.post('/api/messages', {
@@ -1988,7 +2002,7 @@ __webpack_require__.r(__webpack_exports__);
           to: this.chatWith,
           from: this.currentUser
         }).then(function (res) {
-          _this2.messages.push(res.data.message);
+          _this3.messages.push(res.data.message);
         });
       }
 
@@ -2091,11 +2105,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     currentUser: {
       type: Number,
       required: true
+    },
+    chatWith: {
+      type: Number,
+      required: false
     }
   },
   //데이터가 바뀐것 까지 계산
@@ -47582,6 +47602,94 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
+/***/ "./node_modules/vue-chat-scroll/dist/vue-chat-scroll.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/vue-chat-scroll/dist/vue-chat-scroll.js ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function (global, factory) {
+	 true ? module.exports = factory() :
+	undefined;
+}(this, (function () { 'use strict';
+
+/**
+* @name VueJS vChatScroll (vue-chat-scroll)
+* @description Monitors an element and scrolls to the bottom if a new child is added
+* @author Theodore Messinezis <theo@theomessin.com>
+* @file v-chat-scroll  directive definition
+*/
+
+var scrollToBottom = function scrollToBottom(el, smooth) {
+  if (typeof el.scroll === "function") {
+    el.scroll({
+      top: el.scrollHeight,
+      behavior: smooth ? 'smooth' : 'instant'
+    });
+  } else {
+    el.scrollTop = el.scrollHeight;
+  }
+};
+
+var vChatScroll = {
+  bind: function bind(el, binding) {
+    var scrolled = false;
+
+    el.addEventListener('scroll', function (e) {
+      scrolled = el.scrollTop + el.clientHeight + 1 < el.scrollHeight;
+    });
+
+    new MutationObserver(function (e) {
+      var config = binding.value || {};
+      var pause = config.always === false && scrolled;
+      var addedNodes = e[e.length - 1].addedNodes.length;
+      var removedNodes = e[e.length - 1].removedNodes.length;
+
+      if (config.scrollonremoved) {
+        if (pause || addedNodes != 1 && removedNodes != 1) return;
+      } else {
+        if (pause || addedNodes != 1) return;
+      }
+
+      var smooth = config.smooth;
+      var loadingRemoved = !addedNodes && removedNodes === 1;
+      if (loadingRemoved && config.scrollonremoved && 'smoothonremoved' in config) {
+        smooth = config.smoothonremoved;
+      }
+      scrollToBottom(el, smooth);
+    }).observe(el, { childList: true, subtree: true });
+  },
+  inserted: function inserted(el, binding) {
+    var config = binding.value || {};
+    scrollToBottom(el, config.smooth);
+  }
+};
+
+/**
+* @name VueJS vChatScroll (vue-chat-scroll)
+* @description Monitors an element and scrolls to the bottom if a new child is added
+* @author Theodore Messinezis <theo@theomessin.com>
+* @file vue-chat-scroll plugin definition
+*/
+
+var VueChatScroll = {
+  install: function install(Vue, options) {
+    Vue.directive('chat-scroll', vChatScroll);
+  }
+};
+
+if (typeof window !== 'undefined' && window.Vue) {
+  window.Vue.use(VueChatScroll);
+}
+
+return VueChatScroll;
+
+})));
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/Chat.vue?vue&type=template&id=0d66c37a&":
 /*!*******************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/Chat.vue?vue&type=template&id=0d66c37a& ***!
@@ -47602,7 +47710,7 @@ var render = function() {
     { staticClass: "flex h-full" },
     [
       _c("ChatUserList", {
-        attrs: { "current-user": _vm.currentUser },
+        attrs: { "current-user": _vm.currentUser, "chat-with": _vm.chatWith },
         on: { updatedChatWith: _vm.updateChatWith }
       }),
       _vm._v(" "),
@@ -47682,7 +47790,10 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "flex-1" },
+    {
+      directives: [{ name: "chat-scroll", rawName: "v-chat-scroll" }],
+      staticClass: "flex-1 overflow-y-scroll"
+    },
     _vm._l(_vm.messages, function(message) {
       return _c("ChatMessage", { key: message.id, attrs: { message: message } })
     }),
@@ -47752,6 +47863,7 @@ var render = function() {
           key: user.id,
           staticClass:
             "border-b-2 border-gray-600 hover:bg-gray-300 cursor-pointer",
+          class: { "text-pink-400": _vm.chatWith === user.id },
           on: {
             click: function($event) {
               return _vm.updateChatWith(user.id)
@@ -60261,9 +60373,13 @@ module.exports = function(module) {
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
   \*****************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-chat-scroll */ "./node_modules/vue-chat-scroll/dist/vue-chat-scroll.js");
+/* harmony import */ var vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -60285,7 +60401,10 @@ window.Vue.config.devtools = true;
 
 Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]);
 Vue.component('todo-list', __webpack_require__(/*! ./components/TodoList.vue */ "./resources/js/components/TodoList.vue")["default"]);
-Vue.component('chat-component', __webpack_require__(/*! ./components/Chat.vue */ "./resources/js/components/Chat.vue")["default"]);
+Vue.component('chat-component', __webpack_require__(/*! ./components/Chat.vue */ "./resources/js/components/Chat.vue")["default"]); //스크롤 추가
+
+
+Vue.use(vue_chat_scroll__WEBPACK_IMPORTED_MODULE_0___default.a);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -60340,8 +60459,8 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.Pusher = __webpack_require__(/*! pusher-js */ "./node_modules/pusher-js/dist/web/pusher.js");
 window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
   broadcaster: 'pusher',
-  key: "",
-  cluster: "mt1",
+  key: "34837771a035ca6fe751",
+  cluster: "ap3",
   encrypted: true
 });
 
@@ -60420,15 +60539,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************************!*\
   !*** ./resources/js/components/ChatArea.vue ***!
   \**********************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ChatArea_vue_vue_type_template_id_1fa81220___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ChatArea.vue?vue&type=template&id=1fa81220& */ "./resources/js/components/ChatArea.vue?vue&type=template&id=1fa81220&");
 /* harmony import */ var _ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ChatArea.vue?vue&type=script&lang=js& */ "./resources/js/components/ChatArea.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ChatArea_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -60458,7 +60576,7 @@ component.options.__file = "resources/js/components/ChatArea.vue"
 /*!***********************************************************************!*\
   !*** ./resources/js/components/ChatArea.vue?vue&type=script&lang=js& ***!
   \***********************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
